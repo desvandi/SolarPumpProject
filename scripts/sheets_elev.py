@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-"""sheets_elev.py — Lembar G-02 TAMPAK DEPAN & G-03 TAMPAK SAMPING (POTONGAN A-A)."""
+"""sheets_elev.py — Lembar G-02 TAMPAK DEPAN (1:25) & G-03 TAMPAK SAMPING / POTONGAN A-A (1:20).
+Gambar diperbesar (dari 1:100) agar dominan terhadap teks; skala tetap akurat di kop gambar."""
 import math
 import design as D
 from svgcad import Sheet
 from sheets_plan import (kop_sheet, notes_block, legend_block, sheet_list_block,
                          title_under)
 
-X0 = 50.0        # origin elevasi (tepi barat) di kertas
-Y_ST = 138.0     # kertas y puncak sloof
-S1 = 0.01
+X0 = 60.0        # origin elevasi depan (tepi barat) di kertas
+Y_ST = 105.0     # kertas y puncak sloof (G-02)
+S1 = 0.04        # 1:25
 
 
 def ex(x):
@@ -21,7 +22,7 @@ def ey(h):
 
 # ---------------------------------------------------------------- G-02
 def g02():
-    sh = Sheet("TAMPAK DEPAN", "G-02")
+    sh = Sheet("TAMPAK DEPAN", "G-02", scale_txt="1 : 25")
     kop_sheet(sh, "TAMPAK DEPAN — ELEVASI DARI ARAH UTARA")
 
     xL, xR = ex(0), ex(D.ARR_L)
@@ -34,19 +35,19 @@ def g02():
     for ax in D.AXES:
         xA, xB = ex(ax - 300), ex(ax + 300)
         sh.rect(xA, y_soil, xB - xA, y_fb - y_soil, "visible2", fill="#efeeea")
-        sh.hatch_poly([(xA, y_soil), (xB, y_soil), (xB, y_fb), (xA, y_fb)], spacing=1.2)
+        sh.hatch_poly([(xA, y_soil), (xB, y_soil), (xB, y_fb), (xA, y_fb)], spacing=1.6)
     sh.earth_hatch(xL - 7.0, xR + 7.0, y_soil, depth=3.0)
 
     # --- lantai kerja ---
     y_fl = ey(-150)
     sh.rect(xL - 7.0, y_fl, (xR - xL) + 14.0, y_soil - y_fl, "thin", fill="#f7f6f3")
     sh.hatch_poly([(xL - 7.0, y_fl), (xR + 7.0, y_fl), (xR + 7.0, y_soil), (xL - 7.0, y_soil)],
-                  spacing=1.5, ang=-45)
+                  spacing=1.8, ang=-45)
 
     # --- sloof ---
     y_st = ey(0)
     sh.rect(xL, y_st, xR - xL, y_fl - y_st, "visible", fill="#e9e9e6")
-    sh.hatch_poly([(xL, y_st), (xR, y_st), (xR, y_fl), (xL, y_fl)], spacing=1.0)
+    sh.hatch_poly([(xL, y_st), (xR, y_st), (xR, y_fl), (xL, y_fl)], spacing=1.4)
     sh.line(xL, y_st, xR, y_st, "visible")
     sh.line(xL, y_fl, xR, y_fl, "visible2")
 
@@ -63,17 +64,17 @@ def g02():
     for ax in D.AXES:
         xx = ex(ax)
         sh.line(xx, y_st, xx, y_edge, "visible")
-        sh.rect(xx - 0.5, y_st - 0.12, 1.0, 0.3, "visible", fill="#1a1a1a")
-        for db in (-0.28, 0.28):
-            sh.line(xx + db, y_st, xx + db, y_st + 0.55, "thin")
+        sh.rect(xx - 2.0, y_st - 0.12, 4.0, 0.3, "visible", fill="#1a1a1a")
+        for db in (-1.0, 1.0):
+            sh.line(xx + db, y_st, xx + db, y_st + 2.2, "thin")
 
     # --- box panel control (rangka tengah) ---
     bx = ex(D.AXES[1])
-    sh.rect(bx - 2.0, ey(D.BOX_BOTTOM + D.BOX_H), 4.0, 3.0, "visible", fill="#c9cdd2")
-    sh.circle(bx - 1.0, ey(D.BOX_BOTTOM + D.BOX_H) + 1.0, 0.3, "thin", fill="#c0392b")
-    sh.circle(bx + 1.0, ey(D.BOX_BOTTOM + D.BOX_H) + 1.0, 0.3, "thin", fill="#1e8449")
-    sh.line(bx - 2.0, ey(D.BOX_BOTTOM), bx - 1.0, y_st, "thin")
-    sh.line(bx + 2.0, ey(D.BOX_BOTTOM), bx + 1.0, y_st, "thin")
+    sh.rect(bx - 8.0, ey(D.BOX_BOTTOM + D.BOX_H), 16.0, 12.0, "visible", fill="#c9cdd2")
+    sh.circle(bx - 4.0, ey(D.BOX_BOTTOM + D.BOX_H) + 4.0, 1.2, "thin", fill="#c0392b")
+    sh.circle(bx + 4.0, ey(D.BOX_BOTTOM + D.BOX_H) + 4.0, 1.2, "thin", fill="#1e8449")
+    sh.line(bx - 8.0, ey(D.BOX_BOTTOM), bx - 4.0, y_st, "thin")
+    sh.line(bx + 8.0, ey(D.BOX_BOTTOM), bx + 4.0, y_st, "thin")
 
     # --- level (kanan) ---
     sh.level_mark(xR + 4.0, y_st, "+0.15")
@@ -107,40 +108,42 @@ def g02():
     sh.dim_v(y_st, y_edge, xr1, "973", ext_from=(xR, xR))
     sh.dim_v(y_edge, y_top, xr1, "626", ext_from=(xR, xR))
 
-    # --- label kiri ---
-    sh.leader(ex(D.AXES[0]), ey(700), [(48.0, 126.5), (21.5, 126.5)],
+    # --- label kiri (di margin kiri, bebas dari gambar) ---
+    sh.leader(ex(D.AXES[0]), ey(700), [(66.0, 74.0), (23.0, 74.0)],
               "KAKI RANGKA HOLLOW 40 x 20", size=2.1, split="(kaki belakang: lihat G-03)",
               size2=1.9, anchor="start")
-    sh.leader(51.5, ey(-60), [(46.0, 136.0), (21.5, 136.0)],
+    sh.leader(63.0, ey(-60), [(50.0, 100.0), (23.0, 100.0)],
               "BALOK PONDASI RANGKA (SLOOF)", size=2.1, split="BETON 30/25 — K-225",
               size2=1.9, anchor="start")
-    sh.leader(46.0, ey(-200), [(40.0, 143.5), (21.5, 143.5)],
+    sh.leader(63.0, y_fl + 0.3, [(48.0, 93.0), (23.0, 93.0)],
               "LANTAI KERJA BETON 10 CM", size=2.1, anchor="start")
-    sh.leader(ex(D.AXES[0]) - 2.5, ey(-450), [(46.0, 149.5), (21.5, 149.5)],
+    sh.leader(70.5, ey(-450), [(52.0, 118.0), (23.0, 118.0)],
               "PONDASI BATU KALI 60 x 60", size=2.1, split="DALAM 50 CM (6 TITIK)",
               size2=1.9, anchor="start")
 
-    # --- label kanan ---
-    sh.leader(ex(D.ARR_L) - 1.8, y_top + 0.8, [(116.5, 127.5)],
+    # --- label kanan (di area interior elevasi yang kosong) ---
+    sh.leader(225.0, y_edge + 0.4, [(230.0, 78.0)],
               "MODUL SURYA 550 Wp", size=2.3, bold=True,
               split="5 UNIT — KEMIRINGAN 15\u00b0 KE SELATAN", size2=2.0, anchor="start")
-    sh.leader(bx + 2.0, ey(D.BOX_BOTTOM - 60), [(96.0, 140.5), (116.5, 140.5)],
+    sh.leader(bx + 8.0, ey(D.BOX_BOTTOM - 60), [(186.0, 95.0)],
               "BOX PANEL CONTROL", size=2.1, split="(pada rangka tengah)",
               size2=1.9, anchor="start")
 
     # --- tanda detail A ---
-    sh.circle(ex(D.AXES[1]), y_st - 2.2, 3.8, "visible", dash="1.5,1")
-    sh.axis_bubble(ex(D.AXES[1]) + 5.6, y_st - 6.0, "A", r=2.4)
-    sh.line(ex(D.AXES[1]) + 3.6, y_st - 3.6, ex(D.AXES[1]) + 4.6, y_st - 5.2, "dim")
+    sh.circle(ex(D.AXES[1]), y_st - 4.4, 5.0, "visible", dash="1.5,1")
+    sh.axis_bubble(ex(D.AXES[1]) + 7.2, y_st - 8.0, "A", r=2.6)
+    sh.line(ex(D.AXES[1]) + 4.7, y_st - 5.6, ex(D.AXES[1]) + 5.7, y_st - 7.2, "dim")
 
     title_under(sh, (xL + xR) / 2, yb1 + 14.5, "TAMPAK DEPAN")
-    sh.text((xL + xR) / 2, yb1 + 22.5, "DIPANDANG DARI ARAH UTARA (KE SELATAN)",
+    sh.text((xL + xR) / 2, yb1 + 22.5, "DIPANDAT DARI ARAH UTARA (KE SELATAN)",
             size=2.0, anchor="middle", color="#555555")
 
-    detail_a(sh, 105.0, 28.0)
-    notes_block(sh, 195.0, 22.0, 215.0)
-    legend_block(sh, 320.0, 120.0)
-    sheet_list_block(sh, 195.0, 185.0)
+    # --- detail A (skala 1:5) di band bawah kiri ---
+    detail_a(sh, 55.0, 172.0)
+
+    notes_block(sh, 305.0, 16.0, 106.0)
+    legend_block(sh, 305.0, 86.0)
+    sheet_list_block(sh, 305.0, 124.0, 106.0)
     return sh
 
 
@@ -198,23 +201,24 @@ def detail_a(sh, x, y):
 
 # ---------------------------------------------------------------- G-03
 def g03():
-    sh = Sheet("TAMPAK SAMPING (POTONGAN A-A)", "G-03")
+    sh = Sheet("TAMPAK SAMPING (POTONGAN A-A)", "G-03", scale_txt="1 : 20")
     kop_sheet(sh, "TAMPAK SAMPING — POTONGAN A-A (SUMBU 2)")
 
-    XA = 85.0
-    YST = 165.0
+    XA = 100.0     # origin potongan (utara) di kertas
+    YST = 118.0    # kertas y puncak sloof
+    S2 = 0.05      # 1:20
 
     def sx(v):
-        return XA + v * S1
+        return XA + v * S2
 
     def sy(h):
-        return YST - h * S1
+        return YST - h * S2
 
-    y_edge = sy(D.H_FRONT_EDGE)
-    y_re = sy(D.H_REAR_EDGE)
-    y_fl = sy(-150)
-    y_sb = sy(-250)
-    y_fb = sy(-750)
+    y_edge = sy(D.H_FRONT_EDGE)      # 69.35
+    y_re = sy(D.H_REAR_EDGE)         # 39.85
+    y_fl = sy(-150)                  # 125.5
+    y_sb = sy(-250)                  # 130.5
+    y_fb = sy(-750)                  # 155.5
     xF, xR = sx(D.Y_FRONT), sx(D.Y_REAR)
 
     # --- tanah & pondasi ---
@@ -222,7 +226,7 @@ def g03():
         pts = [(sx(xc - 150), y_sb), (sx(xc + 150), y_sb),
                (sx(xc + 300), y_fb), (sx(xc - 300), y_fb)]
         sh.poly(pts, w="visible2", close=True, fill="#efeeea")
-        sh.hatch_poly(pts, spacing=1.2)
+        sh.hatch_poly(pts, spacing=1.7)
     sh.earth_hatch(sx(-300), sx(2650), y_sb, depth=4.0)
 
     # --- lantai kerja (kiri & kanan) ---
@@ -230,14 +234,14 @@ def g03():
                      (D.Y_REAR + 300, D.Y_REAR + 150 + 400)]:
         sh.rect(sx(xa), y_fl, sx(xb) - sx(xa), y_sb - y_fl, "thin", fill="#f7f6f3")
         sh.hatch_poly([(sx(xa), y_fl), (sx(xb), y_fl), (sx(xb), y_sb), (sx(xa), y_sb)],
-                      spacing=1.5, ang=-45)
+                      spacing=1.8, ang=-45)
 
     # --- sloof (potongan) ---
     for xc in (D.Y_FRONT, D.Y_REAR):
         pts = [(sx(xc - 150), YST), (sx(xc + 150), YST), (sx(xc + 150), y_sb), (sx(xc - 150), y_sb)]
         sh.poly(pts, w="frame", close=True)
-        sh.hatch_poly(pts, spacing=1.15)
-    # --- balok ikat (muka sisi) ---
+        sh.hatch_poly(pts, spacing=1.7)
+    # --- balok ikat (muka sisi, di belakang bidang potong) ---
     xT0, xT1 = sx(D.Y_FRONT + 150), sx(D.Y_REAR - 150)
     sh.rect(xT0, YST, xT1 - xT0, y_sb - YST, "visible2")
     sh.line(xT0, YST + 1.25, xT1, YST + 1.25, "thin")
@@ -245,24 +249,24 @@ def g03():
 
     # --- plat, kaki, rail ---
     for xc, hleg in ((D.Y_FRONT, D.H_FRONT_LEG), (D.Y_REAR, D.H_REAR_LEG)):
-        sh.rect(sx(xc) - 0.5, YST - 0.05, 1.0, 0.25, "visible", fill="#1a1a1a")
+        sh.rect(sx(xc) - 2.5, YST - 0.15, 5.0, 0.3, "visible", fill="#1a1a1a")
         for db in (-25, 25):
-            sh.line(sx(xc + db), YST, sx(xc + db), YST + 0.8, "thin")
-        sh.line(sx(xc), YST, sx(xc), sy(hleg - 40 - 5), "visible")
-        sh.rect(sx(xc) - 0.15, sy(hleg - 40 - 5), 0.3, 0.4, "visible", fill="#1a1a1a")
+            sh.line(sx(xc + db), YST, sx(xc + db), YST + 1.6, "thin")
+        sh.line(sx(xc), YST, sx(xc), sy(hleg - 45), "visible")
+        sh.rect(sx(xc) - 1.0, sy(hleg - 45), 2.0, 1.0, "visible", fill="#1a1a1a")
 
     # --- pengaku diagonal ---
     sh.line(sx(D.Y_FRONT), sy(D.BRACE_Y0), sx(D.Y_REAR), sy(D.BRACE_Y1), "visible2")
 
     # --- box panel control ---
     bx0 = sx(D.BOX_YC - 100)
-    sh.rect(bx0, sy(D.BOX_BOTTOM + D.BOX_H), 2.0, 3.0, "visible", fill="#c9cdd2")
-    sh.circle(bx0 + 0.5, sy(D.BOX_BOTTOM + D.BOX_H) + 1.0, 0.25, "thin", fill="#c0392b")
-    sh.circle(bx0 + 1.5, sy(D.BOX_BOTTOM + D.BOX_H) + 1.0, 0.25, "thin", fill="#1e8449")
+    sh.rect(bx0, sy(D.BOX_BOTTOM + D.BOX_H), 10.0, 15.0, "visible", fill="#c9cdd2")
+    sh.circle(bx0 + 2.5, sy(D.BOX_BOTTOM + D.BOX_H) + 3.0, 0.8, "thin", fill="#c0392b")
+    sh.circle(bx0 + 7.5, sy(D.BOX_BOTTOM + D.BOX_H) + 3.0, 0.8, "thin", fill="#1e8449")
     sh.line(bx0, sy(D.BOX_BOTTOM), xF, sy(D.BOX_BOTTOM - 250), "thin")
-    sh.line(bx0 + 2.0, sy(D.BOX_BOTTOM), xR, sy(D.BOX_BOTTOM + 180), "thin")
+    sh.line(bx0 + 10.0, sy(D.BOX_BOTTOM), xR, sy(D.BOX_BOTTOM + 180), "thin")
 
-    # --- modul (garis tebal miring 15°) ---
+    # --- modul (garis miring 15 derajat) ---
     sh.line(sx(0), y_edge, sx(D.PLAN_D), y_re, "visible", color="#3d4f60")
     sh.line(sx(0), y_edge, sx(D.PLAN_D), y_re, "visible", color="#1a1a1a")
 
@@ -277,21 +281,23 @@ def g03():
     sh.dim_v(YST, sy(D.H_REAR_LEG), sx(0) - 18.0, "1400", ext_from=(sx(0), xR))
     sh.dim_v(YST, y_re, sx(0) - 23.0, "1563", ext_from=(sx(D.PLAN_D), sx(D.PLAN_D)))
 
-    # --- dimensi bawah ---
+    # --- dimensi bawah (rantai -> pondasi -> total) ---
     yb = y_fb + 6.0
     sh.dim_h(sx(0), xF, yb, "605", ext_from=(y_fb, y_sb))
     sh.dim_h(xF, xR, yb, "990", ext_from=(y_fb, y_fb))
     sh.dim_h(xR, sx(D.PLAN_D), yb, "605", ext_from=(y_fb, y_sb))
-    sh.dim_h(sx(0), sx(D.PLAN_D), yb + 6.5, "2200", ext_from=(yb, yb))
+    sh.dim_h(sx(D.Y_FRONT - 300), sx(D.Y_FRONT + 300), yb + 6.5, "600",
+             ext_from=(y_fb, y_fb), flip_text=True)
+    sh.dim_h(sx(0), sx(D.PLAN_D), yb + 13.0, "2200", ext_from=(yb, yb))
     # dimensi modul sejajar kemiringan
-    sh.dim_aligned((sx(0), y_edge), (sx(D.PLAN_D), y_re), "2278 (MODUL)", offset=2.8)
+    sh.dim_aligned((sx(0), y_edge), (sx(D.PLAN_D), y_re), "2278 (MODUL)", offset=3.5)
     # sudut 15 derajat
     x0c, y0c = sx(0), y_edge
-    r = 3.2
+    r = 6.0
     p_arc = [(x0c + r * math.cos(math.radians(t)), y0c - r * math.sin(math.radians(t)))
              for t in range(0, 16)]
     sh.poly(p_arc, w="dim")
-    sh.line(x0c, y0c, x0c + 5.0, y0c, "dim")
+    sh.line(x0c, y0c, x0c + 9.0, y0c, "dim")
     sh.text(x0c + r + 0.8, y0c - r - 0.4, "15\u00b0", size=2.2)
 
     # --- dimensi sloof kiri & pondasi kiri ---
@@ -299,50 +305,49 @@ def g03():
     sh.dim_v(y_sb, y_fb, sx(D.Y_FRONT - 300) - 6.5, "500", text_left=True)
     sh.dim_h(sx(D.Y_FRONT - 150), sx(D.Y_FRONT + 150), y_sb + 4.0, "300",
              ext_from=(y_sb, y_sb), flip_text=True)
-    sh.dim_h(sx(D.Y_FRONT - 300), sx(D.Y_FRONT + 300), y_fb + 13.0, "600",
-             ext_from=(y_fb, y_fb), flip_text=True)
     sh.dim_v(y_fl, y_sb, sx(D.Y_FRONT - 400), "100", text_left=True,
              ext_from=(sx(D.Y_FRONT - 300), sx(D.Y_FRONT - 300)))
 
     # --- dimensi box (kiri box) ---
     sh.dim_v(YST, sy(D.BOX_BOTTOM), sx(D.BOX_YC - 140), "400")
     sh.dim_v(sy(D.BOX_BOTTOM), sy(D.BOX_BOTTOM + D.BOX_H), sx(D.BOX_YC - 140), "300")
-    sh.dim_h(bx0, bx0 + 2.0, sy(D.BOX_BOTTOM + D.BOX_H) - 2.2, "200")
+    sh.dim_h(bx0, bx0 + 10.0, sy(D.BOX_BOTTOM + D.BOX_H) - 2.2, "200")
 
-    # --- label kanan (kolom x=112) ---
+    # --- label kanan (kolom x = 216) ---
     def rlab(px, py, pts, t1, t2=None, bold=False, sz=2.1):
         sh.leader(px, py, pts, t1, size=sz, split=t2, size2=sz - 0.2,
                   anchor="start", bold=bold)
 
-    rlab(xR + 0.2, sy(1560), [(sx(D.PLAN_D) + 5.0, 140.0)],
+    rlab(xR + 0.2, sy(1560), [(sx(D.PLAN_D) + 6.0, 45.0)],
          "KAKI & RAIL BAJA HOLLOW 40 x 20")
-    rlab(sx(D.PLAN_D) - 0.5, y_re - 0.4, [(sx(D.PLAN_D) + 5.0, 145.0)],
+    rlab(sx(D.PLAN_D) - 0.5, y_re - 0.4, [(sx(D.PLAN_D) + 6.0, 52.0)],
          "MODUL SURYA 550 Wp", "2278 x 1134 x 35 — KEMIRINGAN 15\u00b0", bold=True, sz=2.3)
-    rlab((xF + xR) / 2 + 1.0, sy(820), [(sx(D.PLAN_D) + 5.0, 150.0)],
+    rlab((xF + xR) / 2 + 1.0, sy(820), [(sx(D.PLAN_D) + 6.0, 58.0)],
          "PENGAKU HOLLOW 40 x 20 (3 BH)")
-    rlab(bx0 + 2.0, sy(680), [(sx(D.PLAN_D) + 5.0, 155.0)],
+    rlab(bx0 + 10.0, sy(680), [(sx(D.PLAN_D) + 6.0, 64.0)],
          "BOX PANEL CONTROL")
-    rlab(sx(D.Y_REAR + 180), y_fb - 1.0, [(sx(D.PLAN_D) + 5.0, 160.0)],
+    rlab(sx(D.Y_REAR + 180), y_fb - 1.0, [(sx(D.PLAN_D) + 6.0, 148.0)],
          "PONDASI BATU KALI", "ATAS 30 / BAWAH 60 / DALAM 50 CM (6 TITIK)")
-    rlab(xR + 0.5, YST + 0.4, [(sx(D.PLAN_D) + 5.0, 166.0)],
+    rlab(xR + 0.5, YST + 0.4, [(sx(D.PLAN_D) + 6.0, 140.0)],
          "PLAT BESI 5 mm 100 x 100 + DYNABOLT M12", "(4 BH / TITIK — 6 TITIK)")
     sh.text(sx(D.PLAN_D) + 8.0, 175.0, "TANAH ASLI", size=2.0)
 
     # --- label kiri bawah ---
-    sh.leader(sx(D.Y_FRONT - 100), y_sb - 0.3, [(83.0, 176.0), (61.5, 176.0)],
+    sh.leader(sx(D.Y_FRONT - 100), y_sb - 0.3, [(115.0, 160.0), (68.0, 160.0)],
               "BALOK PONDASI RANGKA (SLOOF)", split="(BETON 30/25 — K-225)",
               size=2.0, size2=2.0, anchor="end")
-    sh.leader(sx(D.Y_FRONT - 250), y_fl + 0.3, [(78.0, 182.0), (61.5, 182.0)],
+    sh.leader(sx(D.Y_FRONT - 450), y_fl + 0.3, [(100.0, 166.0), (68.0, 166.0)],
               "LANTAI KERJA BETON 10 CM", size=2.0, anchor="end")
-    sh.leader((xT0 + xT1) / 2, y_sb - 0.2, [(86.0, 188.0), (61.5, 188.0)],
+    sh.leader((xT0 + xT1) / 2, y_sb - 0.2, [(108.0, 172.0), (68.0, 172.0)],
               "BALOK IKAT MELINTANG 30/25", size=2.0, anchor="end")
 
-    title_under(sh, (sx(0) + sx(D.PLAN_D)) / 2, yb + 26.0, "TAMPAK SAMPING (POTONGAN A-A)")
-    sh.text((sx(0) + sx(D.PLAN_D)) / 2, yb + 34.0,
+    title_under(sh, (sx(0) + sx(D.PLAN_D)) / 2, 190.0, "TAMPAK SAMPING (POTONGAN A-A)",
+                t2="SKALA 1 : 20")
+    sh.text((sx(0) + sx(D.PLAN_D)) / 2, 198.2,
             "POTONGAN PADA SUMBU 2 — DIPANDANG DARI BARAT (KE TIMUR)", size=2.0,
             anchor="middle", color="#555555")
 
-    notes_block(sh, 195.0, 22.0, 215.0)
-    legend_block(sh, 320.0, 120.0)
-    sheet_list_block(sh, 195.0, 185.0)
+    notes_block(sh, 280.0, 16.0, 131.0)
+    legend_block(sh, 280.0, 86.0)
+    sheet_list_block(sh, 280.0, 124.0, 131.0)
     return sh

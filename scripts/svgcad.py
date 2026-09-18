@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """svgcad.py — Mini CAD library untuk gambar teknik SVG (koordinat kertas dalam mm, y ke bawah).
-Digunakan untuk menghasilkan gambar kerja PLTS Ground Mount 2,75 kWp (A3, 1:100)."""
+Digunakan untuk menghasilkan gambar kerja PLTS Ground Mount 2,75 kWp (A3, multi-skala)."""
 
 import math
 
@@ -22,7 +22,7 @@ LW = {
 class Sheet:
     """Lembar gambar A3 landscape (420x297 mm). origin kiri-atas."""
 
-    def __init__(self, title, doc_no, scale_txt="1 : 100", date_txt="18-09-2026",
+    def __init__(self, title, doc_no, scale_txt="1 : 25", date_txt="18-09-2026",
                  unit_txt="mm", rev="0", border_left=20.0, margin=8.0):
         self.W, self.H = 420.0, 297.0
         self.bl, self.m = border_left, margin

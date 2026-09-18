@@ -3,14 +3,27 @@
 Repositori ini berisi **gambar kerja teknik (construction drawings)** untuk instalasi
 Pembangkit Listrik Tenaga Surya (PLTS) tipe **ground mount** berskala **2,75 kWp**,
 tersusun dari **5 modul surya 550 Wp** yang dipasang vertikal (portrait) dengan
-**kemiringan 15° menghadap utara**. Seluruh lembar digambar pada kertas **A3 dengan
-skala 1:100**, lengkap dengan kop standar, dimensi, arah utara, legenda garis,
+**kemiringan 15° menghadap utara**. Seluruh lembar digambar pada kertas **A3**
+dengan skala **1:25 (tampak) / 1:20 (potongan) / 1:5 (detail)**, lengkap dengan kop standar, dimensi, arah utara, legenda garis,
 catatan teknis, dan Bill of Material (BOM).
 
 Gambar ini merupakan penyempurnaan dari draft awal (tersimpan di folder
 `draft-original/`) — teks yang rusak telah diperbaiki, dimensi antar tampak
 diserasikan, elevasi depan diberi anotasi lengkap, dan geometri disesuaikan dengan
 modul 550 Wp sesungguhnya (2278 × 1134 mm).
+
+### Skala Gambar (Revisi 1 — Diperbesar untuk Visibilitas)
+
+| Lembar | Skala |
+|--------|-------|
+| G-01, G-04, G-05, G-06 (denah/tampak atas) | **1 : 25** |
+| G-02 (tampak depan) | **1 : 25** |
+| G-03 (potongan A-A) | **1 : 20** |
+| DETAIL A (sambungan kaki, pada G-02) | **1 : 5** |
+
+Pada revisi ini gambar diperbesar dari 1:100 menjadi 1:25/1:20 agar gambar
+mendominasi lembar dan terbaca jelas oleh tukang/pelaksana di lapangan — skala
+tetap dihitung konsisten dan tercantum pada kop setiap lembar.
 
 ## Daftar Lembar Gambar
 

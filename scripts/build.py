@@ -59,7 +59,7 @@ def main():
         "/Title": "Gambar Kerja PLTS Ground Mount 2,75 kWp (5 x 550 Wp)",
         "/Author": "Z.ai",
         "/Creator": "Z.ai — penyempurnaan draft SVG pengguna",
-        "/Subject": "Tampak atas, depan, samping, rangka & struktur beton — skala 1:100 (A3)",
+        "/Subject": "Tampak atas, depan, samping, rangka & struktur beton — A3, tampak 1:25, potongan 1:20, detail 1:5",
     })
     pdf_path = os.path.join(OUT, "Gambar Kerja PLTS Ground Mount 2,75 kWp.pdf")
     with open(pdf_path, "wb") as f:
