@@ -2,64 +2,70 @@
 
 Repositori ini berisi **gambar kerja teknik (construction drawings)** untuk instalasi
 Pembangkit Listrik Tenaga Surya (PLTS) tipe **ground mount** berskala **2,75 kWp**,
-tersusun dari **5 modul surya 550 Wp** yang dipasang vertikal (portrait) dengan
-**kemiringan 15° menghadap utara**. Seluruh lembar digambar pada kertas **A3**
-dengan skala **1:25 (tampak) / 1:20 (potongan) / 1:5 (detail)**, lengkap dengan kop standar, dimensi, arah utara, legenda garis,
-catatan teknis, dan Bill of Material (BOM).
+tersusun dari **5 modul surya 550 Wp** (dimensi **1990 × 1130 × 35 mm**) yang dipasang
+vertikal (portrait) dengan **kemiringan 15° menghadap utara**. Seluruh lembar digambar
+pada kertas **A3** dengan skala **1:25 (tampak) / 1:20 (potongan) / 1:5 (detail)**,
+lengkap dengan kop standar, dimensi, arah utara, legenda garis, catatan teknis, dan
+Bill of Material (BOM).
 
 Gambar ini merupakan penyempurnaan dari draft awal (tersimpan di folder
 `draft-original/`) — teks yang rusak telah diperbaiki, dimensi antar tampak
-diserasikan, elevasi depan diberi anotasi lengkap, dan geometri disesuaikan dengan
-modul 550 Wp sesungguhnya (2278 × 1134 mm).
+diserasikan, dan geometri disesuaikan dengan modul 550 Wp sesungguhnya.
 
-### Skala Gambar (Revisi 1 — Diperbesar untuk Visibilitas)
+## Riwayat Revisi
 
-| Lembar | Skala |
-|--------|-------|
-| G-01, G-04, G-05, G-06 (denah/tampak atas) | **1 : 25** |
-| G-02 (tampak depan) | **1 : 25** |
-| G-03 (potongan A-A) | **1 : 20** |
-| DETAIL A (sambungan kaki, pada G-02) | **1 : 5** |
-
-Pada revisi ini gambar diperbesar dari 1:100 menjadi 1:25/1:20 agar gambar
-mendominasi lembar dan terbaca jelas oleh tukang/pelaksana di lapangan — skala
-tetap dihitung konsisten dan tercantum pada kop setiap lembar.
+| Revisi | Isi Perubahan |
+|--------|---------------|
+| **0** | Penyempurnaan draft awal → gambar kerja A3 lengkap (skala 1:100) |
+| **1** | Gambar diperbesar menjadi 1:25 / 1:20 agar dominan dan mudah dibaca |
+| **2** | Revisi teknis sesuai instruksi pemilik proyek: modul 1990 × 1130 mm; balok kaki rangka tinggi **30 cm** di atas lantai kerja; sloof tinggi **25 cm** di atas lantai kerja; pondasi batu kali **4 titik** dengan kedalaman **30 cm di bawah tanah asli**; kaki tengah (sumbu 2) **tanpa pondasi batu kali** — tumpuan langsung pada sloof; **semua tampak atas menampilkan panel secara tersembunyi (disamarkan)** agar rangka, balok kaki, sloof, pembesian, dan plat angkur terlihat jelas |
 
 ## Daftar Lembar Gambar
 
 | No. | Judul Lembar | Isi Utama |
 |-----|--------------|-----------|
-| G-01 | TAMPAK ATAS | Denah array 5670 × 2200 mm, garis sumbu rangka, arah utara, BOM, catatan teknis, legenda garis |
-| G-02 | TAMPAK DEPAN | Elevasi depan dengan dimensi lengkap + **DETAIL A (1:5)** sambungan plat besi & dynabolt M12 |
-| G-03 | TAMPAK SAMPING (POTONGAN A-A) | Potongan melintang: kemiringan 15°, tinggi kaki, sloof 30/25, pondasi batu kali, lantai kerja |
-| G-04 | PANEL SURYA DISAMARKAN (RANGKA) | Denah rangka baja + daftar batang (cut list) |
-| G-05 | PANEL DIHILANGKAN (RANGKA & BETON) | Rangka + sloof + pondasi + garis sumbu |
-| G-06 | PANEL & RANGKA DISAMARKAN (BETON) | Denah beton murni: sloof, balok ikat, pondasi, lantai kerja |
+| G-01 | TAMPAK ATAS (PANEL DISAMARKAN) | Denah umum 5650 × 1922 mm — rangka + sloof + balok kaki + pondasi terlihat, modul hanya proyeksi putus-putus; BOM, catatan, legenda |
+| G-02 | TAMPAK DEPAN | Elevasi depan: balok kaki +0,30, sloof +0,25, pondasi 4 titik + **DETAIL A-1 / A-2 (1:5)** sambungan plat 5 mm & dynabolt M12 |
+| G-03 | TAMPAK SAMPING (POTONGAN A-A) | Potongan sumbu 2: kaki tengah langsung di atas sloof; proyeksi putus-putus pondasi & balok kaki (sumbu 1 & 3); kemiringan 15°, tinggi kaki |
+| G-04 | TAMPAK ATAS — RANGKA PANEL | Denah rangka baja (panel disamarkan) + daftar batang (cut list) |
+| G-05 | TAMPAK ATAS — RANGKA & STRUKTUR BETON | Rangka + sloof + balok kaki + pondasi 4 titik + balok ikat |
+| G-06 | TAMPAK ATAS — STRUKTUR BETON & ANGKUR | Denah beton murni: sloof, balok ikat, balok kaki 30 × 30, pondasi 4 titik, plat + dynabolt |
+
+### Skala Gambar
+
+| Lembar | Skala |
+|--------|-------|
+| G-01, G-04, G-05, G-06 (tampak atas) | **1 : 25** |
+| G-02 (tampak depan) | **1 : 25** |
+| G-03 (potongan A-A) | **1 : 20** |
+| DETAIL A-1 / A-2 (sambungan kaki, pada G-02) | **1 : 5** |
 
 File per lembar tersedia dalam tiga format: **SVG** (vektor, dapat diedit di
 Inkscape/Illustrator), **PNG** (220 dpi, untuk presentasi), dan satu **PDF**
 gabungan 6 halaman (vektor, siap cetak).
 
-## Spesifikasi Teknis Ringkas
+## Spesifikasi Teknis Ringkas (Revisi 2)
 
 | Komponen | Spesifikasi |
 |----------|-------------|
 | Array | 5 × modul 550 Wp = **2,75 kWp**, orientasi portrait |
-| Modul surya | 2278 × 1134 × 35 mm per unit |
-| Jejak rencana | 5670 mm (barat–timur) × 2200 mm (utara–selatan, proyeksi 2278·cos 15°) |
+| Modul surya | **1990 × 1130 × 35 mm** per unit |
+| Jejak rencana | **5650 mm** (barat–timur) × **1922 mm** (utara–selatan, proyeksi 1990·cos 15°) |
 | Kemiringan | **15°** menghadap utara |
-| Kaki rangka | Depan ±1135 mm, belakang ±1400 mm dari puncak sloof; jarak horizontal antar baris 990 mm (sudut tepat 15,0°) |
-| Sumbu rangka | Sumbu 1-2-3 pada 550 / 2835 / 5120 mm dari tepi barat (jarak antar sumbu 2285 mm); kantilever rail 550 mm — **6 titik kaki** |
+| Sumbu rangka | Sumbu 1-2-3 pada 550 / 2825 / 5100 mm dari tepi barat (jarak antar sumbu **2275 mm**); kantilever rail 550 mm |
+| Kaki rangka | **6 titik**: sumbu 1 & 3 alas pada balok kaki (**+0,30**); sumbu 2 (tengah) alas langsung pada sloof (**+0,25**) → kaki tengah 50 mm lebih panjang |
+| Panjang batang kaki | Depan: 2 × 1,040 m + 1 × 1,090 m; belakang: 2 × 1,305 m + 1 × 1,355 m; tinggi rail atas ±1135 / ±1400 mm di atas puncak sloof; jarak horizontal antar baris 990 mm |
 | Rangka | Baja hollow galvanis **40 × 20 mm** tebal min. 1,6 mm, sambungan dilas |
-| Sloof & balok ikat | Beton **300 × 250 mm** mutu **K-225**, +15 cm di atas lantai kerja, tulangan Ø8 sengkang @15 cm |
-| Pondasi | **Batu kali 1:5, 6 titik** — lebar atas 30 cm, bawah 60 cm, kedalaman 50 cm di bawah sloof |
-| Lantai kerja | Beton K-100 tebal 10 cm |
-| Angkuran | Plat besi 5 mm (100 × 100 mm) + **4 dynabolt M12** per titik kaki |
-| Peralatan | Box panel control IP65 400 × 300 × 200 mm pada rangka tengah (elevasi bawah +0,40) |
+| **Balok kaki rangka** | Beton K-225 **30 × 30 cm**, tinggi **+0,30 m di atas lantai kerja**, **4 bh** (sumbu 1 & 3), berdiri di atas pondasi batu kali |
+| Sloof & balok ikat | Beton **300 × 250 mm** mutu **K-225**, tinggi **+0,25 m di atas lantai kerja** (2 sloof memanjang + 3 balok ikat), tulangan Ø8 sengkang @15 cm, monolit |
+| Pondasi | **Batu kali 1:5, hanya 4 titik** (sumbu 1 & 3, baris A & B) — lebar atas 30 cm, bawah 60 cm, **kedalaman 30 cm di bawah tanah asli**; kaki tengah tanpa pondasi batu kali (tumpuan hanya sloof) |
+| Lantai kerja | Beton K-100 tebal 10 cm di sekeliling struktur (elevasi ±0,00) |
+| Angkuran | Plat besi 5 mm (100 × 100 mm) + **4 dynabolt M12** per titik kaki (4 titik di balok kaki, 2 titik langsung di sloof) |
+| Peralatan | Box panel control IP65 400 × 300 × 200 mm pada rangka tengah |
 
-> **Catatan kop gambar**: kolom *Nama Proyek*, *Lokasi*, *No. Kontrak*, tanggal, dan
-> kolom tanda tangan (Dibuat/Diperiksa/Disetujui) sengaja dikosongkan — silakan
-> diisi sesuai identitas proyek Anda.
+> **Catatan kop gambar**: kolom *Nama Proyek*, *Lokasi*, tanggal, dan kolom tanda
+> tangan (Dibuat/Diperiksa/Disetujui) sengaja dikosongkan — silakan diisi sesuai
+> identitas proyek Anda.
 
 ## Struktur Repositori
 
@@ -90,7 +96,7 @@ konsisten (dimensi, BOM, catatan ikut ter-update otomatis).
 pip install -r scripts/requirements.txt
 
 # 2. (Opsional) ubah parameter desain — semua di scripts/design.py
-#    contoh: N_MOD, TILT, SLOOF_W/H, FOOT_DEPTH, dsb.
+#    contoh: N_MOD, TILT, MOD_L/MOD_W, SLOOF_H, PAD_TOP, dsb.
 
 # 3. Bangun ulang semua lembar -> folder gambar-kerja/
 python3 scripts/build.py
@@ -99,13 +105,15 @@ python3 scripts/build.py
 PLTS_OUT=/path/ke/output python3 scripts/build.py
 
 # 4. (Opsional) validasi tidak ada teks keluar bingkai A3
-python3 scripts/validate_bounds.py "gambar-kerja/G-01 TAMPAK ATAS.svg"
+python3 scripts/validate_bounds.py "gambar-kerja"
 ```
 
 Contoh revisi yang umum:
 - **Mengubah kemiringan**: ubah `TILT` di `design.py` → tinggi kaki, proyeksi,
   dan sudut pada semua tampak terhitung otomatis.
 - **Mengubah jumlah modul**: ubah `N_MOD` → panjang array, BOM, dan denah ikut berubah.
+- **Mengubah dimensi modul**: ubah `MOD_L` / `MOD_W` (mis. 1990 × 1130) → jejak
+  rencana, posisi kaki, dan panjang batang terhitung ulang.
 - **Menambah identitas proyek di kop**: edit fungsi kop di `svgcad.py` atau
   isi langsung SVG-nya di Inkscape.
 
@@ -113,15 +121,15 @@ Contoh revisi yang umum:
 
 | No. | Material | Ukuran | Sat. | Qty |
 |-----|----------|--------|------|-----|
-| 1 | Modul surya 550 Wp | 2278 × 1134 × 35 mm | unit | 5 |
-| 2 | Baja hollow galvanis 40 × 20 × 1,6 mm — rail memanjang | 2 × 5,67 m | m | 11,34 |
-| 3 | Baja hollow galvanis 40 × 20 × 1,6 mm — kaki rangka | 3 × 1,09 m + 3 × 1,36 m | m | 7,35 |
-| 4 | Baja hollow galvanis 40 × 20 × 1,6 mm — pengaku & braket box | 6 × 1,34 m + braket | m | 5,30 |
+| 1 | Modul surya 550 Wp | 1990 × 1130 × 35 mm | unit | 5 |
+| 2 | Baja hollow galvanis 40 × 20 × 1,6 mm — rail memanjang | 2 × 5,65 m | m | 11,30 |
+| 3 | Baja hollow galvanis 40 × 20 × 1,6 mm — kaki rangka | depan: 2×1,040 + 1×1,090; belakang: 2×1,305 + 1×1,355 | m | 7,14 |
+| 4 | Baja hollow galvanis 40 × 20 × 1,6 mm — pengaku & braket box | 3 × 1,34 m + 2 × 0,35 m | m | 4,72 |
 | 5 | Klem modul (tengah & ujung) + baut M8 | sesuai pabrikan modul | set | 24 |
 | 6 | Plat besi alas kaki | 5 mm, 100 × 100 mm | pcs | 6 |
 | 7 | Dynabolt / angkur ekspansi | M12 × 100 mm (4 bh/titik) | pcs | 24 |
-| 8 | Beton sloof & balok ikat | mutu K-225 | m³ | 1,05 |
-| 9 | Pondasi batu kali (1 : 5) | atas 30, bawah 60, dalam 50 cm | titik | 6 |
+| 8 | Beton sloof, balok ikat & balok kaki rangka | mutu K-225 | m³ | 1,10 |
+| 9 | Pondasi batu kali (1 : 5) | atas 30, bawah 60, dalam 30 cm di bawah tanah | titik | **4** |
 | 10 | Beton lantai kerja | K-100, tebal 10 cm | m³ | 2,00 |
 | 11 | Besi beton polos Ø8 | tulangan + sengkang @15 cm | kg | 60 |
 | 12 | Box panel control + dudukan | IP65 | unit | 1 |
@@ -131,16 +139,18 @@ Contoh revisi yang umum:
 1. **Teks rusak diperbaiki** — huruf terpecah/tumpang tindih pada draft diubah
    menjadi teks utuh yang rapi dan konsisten.
 2. **Dimensi antar tampak diserasikan** — draft memiliki angka berbeda antar
-   lembar (kedalaman 1990 vs 1968 mm; panjang beton 5136 vs 5670 mm; sloof
-   30 × 30 vs 30 × 25 cm). Kini semua berasal dari satu basis desain.
+   lembar. Kini semua berasal dari satu basis desain (`design.py`).
 3. **TAMPAK DEPAN diberi dimensi lengkap** — draft elevasi depan tanpa satu
-   pun anotasi; kini berdimensi penuh + Detail A (1:5).
-4. **Geometri sesuai modul nyata** — 10 kotak kecil pada draft diganti
-   5 modul 550 Wp ukuran sebenarnya sesuai label "550 × 5 Wp".
+   pun anotasi; kini berdimensi penuh + Detail A-1 / A-2 (1:5).
+4. **Geometri sesuai modul nyata** — modul 550 Wp ukuran 1990 × 1130 mm sesuai
+   spesifikasi pemilik proyek.
 5. **Kelengkapan standar gambar kerja** — kop, skala, arah utara, satuan,
    legenda garis, catatan teknis, BOM, dan tanda potongan A-A.
-6. **Pondasi di semua titik kaki** — draft hanya menaruh pondasi di ujung;
-   kini seluruh 6 titik kaki didukung pondasi batu kali.
+6. **Struktur tumpuan jelas** — balok kaki rangka (+0,30) di atas pondasi batu
+   kali 4 titik; kaki tengah di atas sloof (+0,25) tanpa pondasi batu kali.
+7. **Visibilitas struktur pada tampak atas** — panel surya disamarkan (garis
+   putus-putus) di semua tampak atas agar aplikator dapat membaca rangka,
+   balok beton, sloof, pembesian, dan plat angkur.
 
 ## Referensi
 

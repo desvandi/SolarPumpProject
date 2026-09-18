@@ -15,12 +15,12 @@ import sheets_elev as SE
 OUT = os.environ.get("PLTS_OUT", os.path.join(_HERE, "..", "gambar-kerja"))
 
 FILES = [
-    "G-01 TAMPAK ATAS.svg",
+    "G-01 TAMPAK ATAS (PANEL DISAMARKAN).svg",
     "G-02 TAMPAK DEPAN.svg",
     "G-03 TAMPAK SAMPING (POTONGAN A-A).svg",
-    "G-04 TAMPAK ATAS - PANEL SURYA DISAMARKAN (RANGKA).svg",
-    "G-05 TAMPAK ATAS - PANEL DIHILANGKAN (RANGKA & BETON).svg",
-    "G-06 TAMPAK ATAS - PANEL & RANGKA DISAMARKAN (BETON).svg",
+    "G-04 TAMPAK ATAS - RANGKA PANEL.svg",
+    "G-05 TAMPAK ATAS - RANGKA & STRUKTUR BETON.svg",
+    "G-06 TAMPAK ATAS - STRUKTUR BETON & ANGKUR.svg",
 ]
 
 

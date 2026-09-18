@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """sheets_plan.py — Lembar G-01 (tampak atas), G-04 (rangka), G-05 (rangka+beton), G-06 (beton).
-Skala tampak atas 1 : 25 (S = 0.04) — gambar diperbesar agar dominan terhadap anotasi.
-Tata letak: gambar besar kiri-atas, kolom catatan kanan, tabel di band bawah (di atas kop)."""
+Skala tampak atas 1 : 25 (S = 0.04).
+REVISI 2: modul surya DISAMARKAN pada semua tampak atas (garis putus-putus) agar
+struktur rangka, balok kaki rangka, sloof, pembesian dan plat angkur terlihat jelas.
+Pondasi batu kali hanya 4 titik (sumbu 1 & 3); kaki tengah (sumbu 2) di atas sloof."""
 import math
 import design as D
 from svgcad import Sheet
@@ -73,13 +75,11 @@ def legend_block(sh, x, y, w=105.0):
         ("dim", None, "Garis dimensi / leader", False),
         ("center", "4,0.8,0.8", "Garis sumbu", False),
         ("thin", None, "Arsir beton / detail tipis", False),
-        ("visible", None, "Kotak gelap : modul surya", True),
+        ("thin", "2,1.2", "Proyeksi modul surya (disamarkan)", False),
     ]
     for st, dash, lbl, dark in samples:
-        if dark:
-            sh.rect(x, yy - 1.4, 9, 1.8, "visible", fill="#3d4f60")
-        else:
-            sh.line(x, yy - 0.5, x + 9, yy - 0.5, st, dash=dash)
+        sh.line(x, yy - 0.5, x + 9, yy - 0.5, st, dash=dash,
+                color="#777777" if dash else "#1a1a1a")
         sh.text(x + 11.5, yy, lbl, size=2.05)
         yy += 4.2
     # arsir tanah
@@ -137,11 +137,13 @@ def kop_sheet(sh, judul):
     sh.text(412.0 - 1.5, 285.5, "SEMUA UKURAN DALAM mm", size=2.0, anchor="end", color="#666666")
 
 
-def plan_common(sh, show_modules="solid", show_ghost=False, show_frame=False,
-                show_beton=False, show_beton_only=False, show_floor=False,
-                show_box=False, show_braces=False, show_plates=False,
-                plates_solid=False, legs_solid=False):
-    """Gambar rencana bersama sesuai kombinasi layer."""
+# ---------------------------------------------------------------- gambar rencana
+def plan_common(sh, show_ghost=True, show_frame=False, show_beton=False,
+                show_beton_only=False, show_floor=False, show_box=False,
+                show_braces=False, show_plates=False, plates_solid=False,
+                legs_solid=False):
+    """Gambar rencana bersama sesuai kombinasi layer.
+    Modul selalu disamarkan (ghost) — tidak pernah digambar solid."""
     xL, xR = mx(0), mx(D.ARR_L)
     yT, yB = my(0), my(D.PLAN_D)
 
@@ -155,10 +157,12 @@ def plan_common(sh, show_modules="solid", show_ghost=False, show_frame=False,
 
     # --- beton ---
     if show_beton or show_beton_only:
+        # sloof memanjang (baris A & B)
         for yc in (D.Y_FRONT, D.Y_REAR):
             yA, yB2 = my(yc - 150), my(yc + 150)
             sh.rect(xL, yA, xR - xL, yB2 - yA, "visible2", fill="#e9e9e6")
             sh.hatch_poly([(xL, yA), (xR, yA), (xR, yB2), (xL, yB2)], spacing=1.6)
+        # balok ikat melintang (sumbu 1-2-3)
         for ax in D.AXES:
             xA, xB2 = mx(ax - 150), mx(ax + 150)
             sh.rect(xA, my(D.Y_FRONT + 150), xB2 - xA,
@@ -166,10 +170,19 @@ def plan_common(sh, show_modules="solid", show_ghost=False, show_frame=False,
             sh.hatch_poly([(xA, my(D.Y_FRONT + 150)), (xB2, my(D.Y_FRONT + 150)),
                            (xB2, my(D.Y_REAR - 150)), (xA, my(D.Y_REAR - 150))],
                           spacing=1.6, phase=0.55)
-        # pondasi (tersembunyi)
-        for ax in D.AXES:
+        # balok kaki rangka 30x30 (4 titik — sumbu 1 & 3)
+        for ax in D.OUTER_AXES:
+            for yc in (D.Y_FRONT, D.Y_REAR):
+                xA, yA = mx(ax - 150), my(yc - 150)
+                sh.rect(xA, yA, ph(D.PAD_PLAN), ph(D.PAD_PLAN), "visible2", fill="#d7d7d0")
+                sh.hatch_poly([(xA, yA), (xA + ph(D.PAD_PLAN), yA),
+                               (xA + ph(D.PAD_PLAN), yA + ph(D.PAD_PLAN)),
+                               (xA, yA + ph(D.PAD_PLAN))], spacing=1.4, phase=0.8)
+        # pondasi batu kali 60 x 60 (tersembunyi — hanya 4 titik, sumbu 1 & 3)
+        for ax in D.OUTER_AXES:
             for yc in (D.Y_FRONT, D.Y_REAR):
                 sh.rect(mx(ax - 300), my(yc - 300), ph(600), ph(600), "hidden", dash="2,1")
+
     # --- rangka ---
     if show_frame:
         # rail
@@ -184,11 +197,12 @@ def plan_common(sh, show_modules="solid", show_ghost=False, show_frame=False,
                 sh.rect(mx(ax - 10), my(yc - 20), ph(D.LEG_EW), ph(D.LEG_NS), st,
                         fill="#777777", dash=dash)
         # plat besi
-        for ax in D.AXES:
-            for yc in (D.Y_FRONT, D.Y_REAR):
-                st = "visible" if plates_solid else "hidden"
-                dash = None if plates_solid else "2,1"
-                sh.rect(mx(ax - 50), my(yc - 50), ph(D.PLATE), ph(D.PLATE), st, dash=dash)
+        if show_plates:
+            for ax in D.AXES:
+                for yc in (D.Y_FRONT, D.Y_REAR):
+                    st = "visible" if plates_solid else "hidden"
+                    dash = None if plates_solid else "2,1"
+                    sh.rect(mx(ax - 50), my(yc - 50), ph(D.PLATE), ph(D.PLATE), st, dash=dash)
         # pengaku (di bawah rail, terlihat)
         if show_braces:
             for ax in D.AXES:
@@ -199,22 +213,16 @@ def plan_common(sh, show_modules="solid", show_ghost=False, show_frame=False,
             sh.rect(bx0, by0, ph(D.BOX_EW), ph(D.BOX_NS), "visible", fill="#c9cdd2")
             sh.line(bx0, by0 + ph(D.BOX_NS) / 2, bx0 + ph(D.BOX_EW), by0 + ph(D.BOX_NS) / 2,
                     "visible2", dash="1.5,1")
-    # --- modul ---
+
+    # --- modul: selalu disamarkan ---
     if show_ghost:
-        sh.rect(xL, yT, xR - xL, yB - yT, "thin", fill="none", dash="2,1.2")
-        sh.text(xL + 2.0, yT + 3.4, "PROYEKSI MODUL SURYA (disamarkan)", size=2.0,
-                color="#888888")
-    if show_modules == "solid":
-        for i in range(D.N_MOD):
-            xA = mx(i * D.MOD_W)
-            w = D.MOD_W * S
-            sh.rect(xA, yT, w, yB - yT, "visible", fill="#3d4f60")
-            if w > 8:
-                for k in range(1, 6):  # 6 jalur sel
-                    yy = yT + (yB - yT) * k / 6.0
-                    sh.line(xA, yy, xA + w, yy, "thin", color="#9fb2c4")
-            if i > 0:
-                sh.line(xA, yT, xA, yB, "thin", color="#e8eef4")
+        sh.rect(xL, yT, xR - xL, yB - yT, "thin", fill="none", dash="2,1.2", color="#777777")
+        for i in range(1, D.N_MOD):
+            xx = mx(i * D.MOD_W)
+            sh.line(xx, yT, xx, yB, "thin", dash="1.6,1.2", color="#999999")
+        sh.text(xL + 2.0, yT + 3.4,
+                "PROYEKSI MODUL SURYA 550 Wp (DISAMARKAN) — 1990 x 1130 mm",
+                size=2.0, color="#888888")
         # arah kemiringan (digeser dari sumbu 2 agar tidak menabrak garis potongan A-A)
         xcc = (xL + xR) / 2 - 45.0
         sh.text(xcc, yT - 2.6, "ARAH KEMIRINGAN 15\u00b0 \u2192 SELATAN", size=2.0,
@@ -232,7 +240,7 @@ def plan_dims(sh, overall_bottom=True):
     yT, yB = my(0), my(D.PLAN_D)
     # atas: rantai modul (dalam) + total (luar)
     ticks = [mx(i * D.MOD_W) for i in range(D.N_MOD + 1)]
-    sh.dim_h(xL, xR, yT - 13.0, "5670", ext_from=(yT - 3.0, yT - 3.0))
+    sh.dim_h(xL, xR, yT - 13.0, "5650", ext_from=(yT - 3.0, yT - 3.0))
     yy = yT - 7.0
     sh.line(xL, yy, xR, yy, "dim")
     sh._arrow(xL, yy, 0)
@@ -241,22 +249,22 @@ def plan_dims(sh, overall_bottom=True):
         sh._arrow(tx, yy, 0)
         sh._arrow(tx, yy, 180)
     for i in range(D.N_MOD):
-        sh.text((ticks[i] + ticks[i + 1]) / 2, yy - 0.8, "1134", size=2.2, anchor="middle")
+        sh.text((ticks[i] + ticks[i + 1]) / 2, yy - 0.8, "1130", size=2.2, anchor="middle")
     # bawah: sumbu
     yb1 = yB + 9.0
     for (xa, xb, lbl) in [(mx(0), mx(D.AXES[0]), "550"),
-                           (mx(D.AXES[0]), mx(D.AXES[1]), "2285"),
-                           (mx(D.AXES[1]), mx(D.AXES[2]), "2285"),
+                           (mx(D.AXES[0]), mx(D.AXES[1]), "2275"),
+                           (mx(D.AXES[1]), mx(D.AXES[2]), "2275"),
                            (mx(D.AXES[2]), xR, "550")]:
         sh.dim_h(xa, xb, yb1, lbl, ext_from=(yB + 5.0, yB + 5.0))
     if overall_bottom:
-        sh.dim_h(xL, xR, yb1 + 7.0, "5670", ext_from=(yb1, yb1))
+        sh.dim_h(xL, xR, yb1 + 7.0, "5650", ext_from=(yb1, yb1))
     # kiri: kedalaman
-    sh.dim_v(yT, yB, xL - 6.0, "2200", ext_from=(xL - 4.0, xL - 4.0))
+    sh.dim_v(yT, yB, xL - 6.0, "1922", ext_from=(xL - 4.0, xL - 4.0))
     # kanan: baris kaki
     sh.dim_v(my(D.Y_FRONT), my(D.Y_REAR), xR + 6.0, "990", ext_from=(xR + 4.0, xR + 4.0))
-    sh.dim_v(yT, my(D.Y_FRONT), xR + 12.5, "605", ext_from=(xR + 11.5, xR + 4.0))
-    sh.dim_v(my(D.Y_REAR), yB, xR + 12.5, "605", ext_from=(xR + 4.0, xR + 11.5))
+    sh.dim_v(yT, my(D.Y_FRONT), xR + 12.5, "466", ext_from=(xR + 11.5, xR + 4.0))
+    sh.dim_v(my(D.Y_REAR), yB, xR + 12.5, "466", ext_from=(xR + 4.0, xR + 11.5))
 
 
 def axis_bubbles(sh, rows=True):
@@ -269,9 +277,11 @@ def axis_bubbles(sh, rows=True):
 
 # ---------------------------------------------------------------- G-01
 def g01():
-    sh = Sheet("TAMPAK ATAS", "G-01", scale_txt="1 : 25")
-    kop_sheet(sh, "TAMPAK ATAS — RENCANA SUSUNAN MODUL")
-    plan_common(sh, show_modules="solid")
+    sh = Sheet("TAMPAK ATAS (PANEL DISAMARKAN)", "G-01", scale_txt="1 : 25", rev="2")
+    kop_sheet(sh, "TAMPAK ATAS — RENCANA UMUM (PANEL DISAMARKAN)")
+    # rencana umum: rangka + beton + pondasi terlihat, modul hanya proyeksi putus-putus
+    plan_common(sh, show_ghost=True, show_frame=True, show_beton=True,
+                show_floor=True, show_plates=True, show_box=True)
     plan_dims(sh)
     axis_bubbles(sh)
 
@@ -281,12 +291,13 @@ def g01():
     # arah pandang tampak depan (dari utara, melihat ke selatan)
     sh.view_dir(mx(0) - 8.0, my(D.PLAN_D) + 20.0, "TAMPAK DEPAN", deg=90, size=1.8)
 
-    # label modul sebagai "chip" putih di dalam array (tidak mengganggu dimensi)
-    cx, cy = (mx(0) + mx(D.ARR_L)) / 2, (my(0) + my(D.PLAN_D)) / 2
-    sh.rect(cx - 29.0, cy - 4.6, 58.0, 9.2, "thin", fill="#ffffff")
-    sh.text(cx, cy - 0.9, "MODUL SURYA 550 Wp — 5 UNIT (2,75 kWp)", size=2.3,
+    # label modul sebagai "chip" putih (digeser ke kiri agar tidak menutup
+    # garis potongan A-A di sumbu 2 dan box panel control)
+    cx, cy = 105.0, (my(0) + my(D.PLAN_D)) / 2
+    sh.rect(cx - 36.0, cy - 5.4, 72.0, 10.8, "thin", fill="#ffffff")
+    sh.text(cx, cy - 1.1, "MODUL SURYA 550 Wp — 5 UNIT (2,75 kWp) — DISAMARKAN", size=2.3,
             anchor="middle", bold=True)
-    sh.text(cx, cy + 2.7, "2278 x 1134 x 35 mm — ORIENTASI PORTRAIT", size=2.0,
+    sh.text(cx, cy + 2.9, "1990 x 1130 x 35 mm — ORIENTASI PORTRAIT", size=2.0,
             anchor="middle")
 
     # panah utara (pojok kanan atas lembar)
@@ -295,22 +306,26 @@ def g01():
     sh.text(388.0, 44.2, "(azimuth 0\u00b0 — sesuaikan site)", size=1.8,
             anchor="middle", color="#666666")
 
-    title_under(sh, (mx(0) + mx(D.ARR_L)) / 2, 155.0, "TAMPAK ATAS")
+    title_under(sh, (mx(0) + mx(D.ARR_L)) / 2, 148.0, "TAMPAK ATAS")
+    sh.text((mx(0) + mx(D.ARR_L)) / 2, 155.0,
+            "MODUL DISAMARKAN AGAR STRUKTUR TERLIHAT — PONDASI BATU KALI HANYA 4 TITIK (SUMBU 1 & 3)",
+            size=1.9, anchor="middle", color="#555555")
 
     # band bawah: BOM
-    bom_table(sh, 24.0, 188.5)
+    bom_table(sh, 24.0, 186.0)
     # kolom kanan: catatan, legenda, daftar lembar
     notes_block(sh, COLX, 50.0, COLW)
-    legend_block(sh, COLX, 118.0)
-    sheet_list_block(sh, COLX, 154.0, COLW)
+    legend_block(sh, COLX, 122.0)
+    sheet_list_block(sh, COLX, 159.0, COLW)
     return sh
 
 
 # ---------------------------------------------------------------- G-04
 def g04():
-    sh = Sheet("TAMPAK ATAS — PANEL SURYA DISAMARKAN (RANGKA)", "G-04", scale_txt="1 : 25")
+    sh = Sheet("TAMPAK ATAS — RANGKA PANEL", "G-04", scale_txt="1 : 25", rev="2")
     kop_sheet(sh, "TAMPAK ATAS — RANGKA PANEL (PANEL DISAMARKAN)")
-    plan_common(sh, show_ghost=True, show_frame=True, show_braces=True, show_box=True)
+    plan_common(sh, show_ghost=True, show_frame=True, show_braces=True, show_box=True,
+                show_plates=True)
     plan_dims(sh, overall_bottom=False)
     axis_bubbles(sh)
     # dimensi lebar kaki (interior, bebas objek)
@@ -320,7 +335,7 @@ def g04():
     # callout rangka — ditempatkan di area interior rencana yang kosong
     sh.leader(mx(2500), my(D.Y_FRONT), [(110.0, 70.0)],
               "RAIL MEMANJANG BAJA HOLLOW", size=2.2,
-              split="GALVANIS 40 x 20 mm (2 BH x 5,67 m)", size2=2.0, anchor="start")
+              split="GALVANIS 40 x 20 mm (2 BH x 5,65 m)", size2=2.0, anchor="start")
     sh.leader(mx(D.AXES[2]), my(D.Y_FRONT) + 0.8, [(238.0, 72.0)],
               "KAKI RANGKA HOLLOW 40 x 20", size=2.2,
               split="6 TITIK (sumbu 1-2-3, baris A-B)", size2=2.0, anchor="end")
@@ -333,26 +348,27 @@ def g04():
               split="(dipasang pada rangka tengah)", size2=2.0, anchor="start")
     sh.leader(mx(D.AXES[1]), my(D.Y_FRONT) + 1.5, [(160.0, 64.0)],
               "SAMBUNGAN RANGKA DILAS", size=2.2, bold=True,
-              split="(lihat DETAIL A — G-02)", size2=2.0, anchor="start")
+              split="(lihat DETAIL A-1 / A-2 — G-02)", size2=2.0, anchor="start")
 
-    title_under(sh, (mx(0) + mx(D.ARR_L)) / 2, 155.0, "TAMPAK ATAS — RANGKA PANEL")
+    title_under(sh, (mx(0) + mx(D.ARR_L)) / 2, 152.0, "TAMPAK ATAS — RANGKA PANEL")
 
     # band bawah: tabel batang
-    sh.text(24.0, 165.5, "DAFTAR BATANG RANGKA :", size=2.6, bold=True)
+    sh.text(24.0, 162.5, "DAFTAR BATANG RANGKA :", size=2.6, bold=True)
     rows = [
-        ("K-1", "Kaki depan (baris A)", "Hollow 40 x 20", "3", "1.090 m"),
-        ("K-2", "Kaki belakang (baris B)", "Hollow 40 x 20", "3", "1.355 m"),
-        ("R-1", "Rail memanjang", "Hollow 40 x 20", "2", "5.670 m"),
-        ("P-1", "Pengaku diagonal", "Hollow 40 x 20", "3", "1.340 m"),
-        ("P-2", "Braket dudukan box", "Hollow 40 x 20", "2", "0.350 m"),
+        ("K-1", "Kaki depan (baris A)", "Hollow 40 x 20", "3", "2x1,040 + 1x1,090"),
+        ("K-2", "Kaki belakang (baris B)", "Hollow 40 x 20", "3", "2x1,305 + 1x1,355"),
+        ("R-1", "Rail memanjang", "Hollow 40 x 20", "2", "5,650"),
+        ("P-1", "Pengaku diagonal", "Hollow 40 x 20", "3", "1,340"),
+        ("P-2", "Braket dudukan box", "Hollow 40 x 20", "2", "0,350"),
         ("PL-1", "Plat besi alas kaki", "Plat 5 mm, 100 x 100", "6", "—"),
     ]
-    cols = [0.0, 14.0, 78.0, 132.0, 158.0, 180.0, 198.0]
-    x, y = 24.0, 168.0
-    sh.rect(x, y, 198.0, 4.2, "visible", fill="#e8ecef")
+    cols = [0.0, 14.0, 78.0, 132.0, 158.0, 180.0, 215.0]
+    x, y = 24.0, 165.0
+    wtab = 215.0
+    sh.rect(x, y, wtab, 4.2, "visible", fill="#e8ecef")
     for cx, hd, anc in [(2.0, "KODE", "start"), (16.0, "URAIAN", "start"),
                         (79.5, "PENAMPANG", "start"), (140.0, "JML", "middle"),
-                        (169.0, "PANJANG", "middle")]:
+                        (186.0, "PANJANG (m)", "middle")]:
         sh.text(x + cx, y + 2.9, hd, size=1.9, bold=True, anchor=anc)
     yy = y + 4.2
     for r in rows:
@@ -360,63 +376,74 @@ def g04():
         sh.text(x + 16.0, yy + 2.7, r[1], size=1.95)
         sh.text(x + 79.5, yy + 2.7, r[2], size=1.95)
         sh.text(x + 140.0, yy + 2.7, r[3], size=1.95, anchor="middle")
-        sh.text(x + 169.0, yy + 2.7, r[4], size=1.95, anchor="middle")
-        sh.line(x, yy, x + 198.0, yy, "thin")
+        sh.text(x + 186.0, yy + 2.7, r[4], size=1.95, anchor="middle")
+        sh.line(x, yy, x + wtab, yy, "thin")
         yy += 3.9
     for cx in cols[1:-1]:
         sh.line(x + cx, y, x + cx, yy, "thin")
-    sh.line(x, yy, x + 198.0, yy, "visible")
-    sh.rect(x, y, 198.0, yy - y, "visible")
+    sh.line(x, yy, x + wtab, yy, "visible")
+    sh.rect(x, y, wtab, yy - y, "visible")
+
+    sh.text(24.0, yy + 3.4, "PANJANG KAKI (m) : kolom = 2 BH (sumbu 1 & 3, alas di atas "
+            "balok kaki +0,30) + 1 BH (sumbu 2, alas di atas sloof +0,25).", size=1.95)
 
     notes_block(sh, COLX, 44.0, COLW)
-    legend_block(sh, COLX, 114.0)
+    legend_block(sh, COLX, 117.0)
     return sh
 
 
 # ---------------------------------------------------------------- G-05
 def g05():
-    sh = Sheet("TAMPAK ATAS — PANEL DIHILANGKAN (RANGKA & BETON)", "G-05", scale_txt="1 : 25")
+    sh = Sheet("TAMPAK ATAS — RANGKA & STRUKTUR BETON", "G-05", scale_txt="1 : 25", rev="2")
     kop_sheet(sh, "TAMPAK ATAS — RANGKA PANEL & STRUKTUR BETON")
     plan_common(sh, show_ghost=True, show_frame=True, show_braces=True, show_box=True,
-                show_beton=True, show_floor=True)
+                show_beton=True, show_floor=True, show_plates=True)
     plan_dims(sh, overall_bottom=False)
     axis_bubbles(sh)
     # dimensi balok ikat (interior, di atas balok ikat sumbu 2)
     sh.dim_h(mx(D.AXES[1] - 150), mx(D.AXES[1] + 150), my(D.Y_FRONT + 150) + 4.0, "300",
              ext_from=(my(D.Y_FRONT + 150) + 1.0, my(D.Y_FRONT + 150) + 1.0))
 
-    # callout di area interior yang kosong (atas: zona bebas pondasi; bawah: bawah sloof B)
-    sh.leader(100.0, my(D.Y_FRONT - 150), [(105.0, 45.0)],
+    # callout di area interior yang kosong
+    sh.leader(100.0, my(D.Y_FRONT + 20), [(75.0, 44.0)],
               "BALOK PONDASI RANGKA (SLOOF)", size=2.2,
-              split="BETON 30/25 — K-225 — 2 BH x 5,67 m", size2=2.0, anchor="start")
-    sh.leader(mx(D.AXES[1]), 88.0, [(175.0, 113.0)],
-              "BESI TULANGAN \u00d88 mm, SENGKANG \u00d88 JARAK 15 cm", size=2.2, bold=True,
-              split="SEMUA STRUKTUR BETON DISATUKAN (MONOLIT)", size2=2.0, anchor="start")
-    sh.leader(mx(D.AXES[1]), 66.0, [(170.0, 47.0)],
+              split="BETON 30/25 — K-225 — TINGGI +0,25 — 2 BH x 5,65 m", size2=2.0,
+              anchor="start")
+    sh.leader(mx(D.AXES[0] + 150), my(D.Y_FRONT + 40), [(76.0, 66.0)],
+              "BALOK KAKI RANGKA 30 x 30", size=2.2,
+              split="TINGGI +0,30 — 4 BH (SUMBU 1 & 3)", size2=2.0, anchor="start")
+    sh.leader(mx(D.AXES[0] - 80), my(D.Y_FRONT + 180), [(76.0, 84.0)],
               "BALOK IKAT MELINTANG 30/25", size=2.2,
               split="3 BH — MONOLIT DENGAN SLOOF", size2=2.0, anchor="start")
-    sh.leader(mx(D.AXES[2]), my(D.Y_REAR) + 0.8, [(226.0, 110.0)],
+    sh.leader(mx(D.AXES[1]), my(D.Y_REAR - 60), [(70.0, 108.0)],
+              "BESI TULANGAN \u00d88 mm, SENGKANG \u00d88 JARAK 15 cm", size=2.2, bold=True,
+              split="SEMUA STRUKTUR BETON DISATUKAN (MONOLIT)", size2=2.0, anchor="start")
+    sh.leader(mx(D.AXES[2]), my(D.Y_REAR) + 0.8, [(232.0, 108.0)],
               "KAKI DI ATAS PLAT BESI 5 mm", size=2.2,
               split="+ DYNABOLT M12 (4 BH/TITIK)", size2=2.0, anchor="end")
-    sh.leader(mx(D.AXES[2] + 300), my(D.Y_REAR + 300) - 0.5, [(262.0, 116.0)],
+    sh.leader(mx(D.AXES[2] + 300), my(D.Y_REAR + 300) - 0.5, [(240.0, 112.0)],
               "PONDASI BATU KALI 60 x 60", size=2.2,
-              split="DALAM 50 cm (6 TITIK)", size2=2.0, anchor="start")
+              split="DALAM 30 cm — 4 TITIK (SUMBU 1 & 3)", size2=2.0, anchor="start")
 
-    title_under(sh, (mx(0) + mx(D.ARR_L)) / 2, 155.0, "TAMPAK ATAS — RANGKA & BETON")
+    title_under(sh, (mx(0) + mx(D.ARR_L)) / 2, 152.0, "TAMPAK ATAS — RANGKA & BETON")
 
     notes_block(sh, COLX, 44.0, COLW)
-    legend_block(sh, COLX, 114.0)
-    sheet_list_block(sh, COLX, 152.0, COLW)
+    legend_block(sh, COLX, 117.0)
+    sheet_list_block(sh, COLX, 155.0, COLW)
     return sh
 
 
 # ---------------------------------------------------------------- G-06
 def g06():
-    sh = Sheet("TAMPAK ATAS — PANEL & RANGKA DISAMARKAN (BETON)", "G-06", scale_txt="1 : 25")
+    sh = Sheet("TAMPAK ATAS — STRUKTUR BETON & ANGKUR", "G-06", scale_txt="1 : 25", rev="2")
     kop_sheet(sh, "TAMPAK ATAS — STRUKTUR BETON (PANEL & RANGKA DISAMARKAN)")
     plan_common(sh, show_beton_only=True, show_plates=True, plates_solid=True, show_floor=True)
     plan_dims(sh, overall_bottom=False)
     axis_bubbles(sh)
+
+    # dimensi pondasi (di bawah pondasi sumbu 1 — bebas dari label proyeksi modul)
+    sh.dim_h(mx(D.AXES[0] - 300), mx(D.AXES[0] + 300), my(D.Y_FRONT + 300) + 4.5, "600",
+             ext_from=(my(D.Y_FRONT + 300), my(D.Y_FRONT + 300)))
 
     # plat & dynabolt (4 titik angkur per plat, proporsional skala 1:25)
     for ax in D.AXES:
@@ -426,28 +453,35 @@ def g06():
                 for dy in (-25, 25):
                     sh.circle(mx(ax + dx), my(yc + dy), 0.4, "thin", fill="#1a1a1a")
 
-    sh.leader(100.0, my(D.Y_FRONT - 150), [(105.0, 45.0)],
-              "BALOK PONDASI RANGKA (SLOOF BETON)", size=2.2,
-              split="30 x 25 cm — 2 BH x 5,67 m — K-225", size2=2.0, anchor="start")
-    sh.leader(mx(D.AXES[1]), 66.0, [(170.0, 47.0)],
-              "BALOK IKAT MELINTANG 30 x 25 cm", size=2.2,
+    # callout
+    sh.leader(100.0, my(D.Y_FRONT + 20), [(78.0, 44.0)],
+              "BALOK PONDASI RANGKA (SLOOF)", size=2.2,
+              split="30 x 25 cm — TINGGI +0,25 — 2 BH x 5,65 m — K-225", size2=2.0,
+              anchor="start")
+    sh.leader(mx(D.AXES[0] - 80), my(D.Y_FRONT + 180), [(76.0, 66.0)],
+              "BALOK IKAT MELINTANG 30/25", size=2.2,
               split="3 BH (sumbu 1-2-3) — MONOLIT", size2=2.0, anchor="start")
-    sh.leader(245.0, 99.0, [(250.0, 116.0)],
-              "PLAT BESI 5 mm 100 x 100", size=2.2,
-              split="+ DYNABOLT M12 (6 TITIK)", size2=2.0, anchor="start")
-    sh.leader(mx(D.AXES[2] + 300) - 0.5, my(D.Y_FRONT - 300) + 0.5, [(262.0, 38.0)],
+    sh.leader(mx(D.AXES[0]), my(D.Y_FRONT), [(76.0, 84.0)],
+              "BALOK KAKI RANGKA 30 x 30", size=2.2,
+              split="TINGGI +0,30 — 4 BH (SUMBU 1 & 3)", size2=2.0, anchor="start")
+    sh.leader(mx(D.AXES[1]), my(D.Y_REAR - 60), [(70.0, 108.0)],
+              "KAKI TENGAH (SUMBU 2 — 2 TITIK)", size=2.2,
+              split="PLAT LANGSUNG DI ATAS SLOOF — TANPA BATU KALI", size2=2.0,
+              anchor="start")
+    sh.leader(mx(D.AXES[2] + 300), my(D.Y_REAR + 300) - 0.5, [(240.0, 112.0)],
               "PONDASI BATU KALI 60 x 60", size=2.2,
-              split="DALAM 50 cm (6 TITIK)", size2=2.0, anchor="start")
+              split="DALAM 30 cm — 4 TITIK (SUMBU 1 & 3)", size2=2.0, anchor="start")
 
-    title_under(sh, (mx(0) + mx(D.ARR_L)) / 2, 155.0, "TAMPAK ATAS — STRUKTUR BETON")
+    title_under(sh, (mx(0) + mx(D.ARR_L)) / 2, 152.0, "TAMPAK ATAS — STRUKTUR BETON")
 
     # band bawah: referensi detail + catatan (lebar penuh -> lebih ringkas)
-    sh.text(24.0, 168.0, "PLAT ANGKUR & SAMBUNGAN KAKI:", size=2.6, bold=True)
-    sh.text(24.0, 172.6, "LIHAT DETAIL A PADA LEMBAR G-02 (SKALA 1 : 5)", size=2.2, bold=True,
-            color="#a04000")
-    sh.text(24.0, 177.6, "Plat besi 5 mm 100 x 100 mm diangkur dengan 4 dynabolt M12 ke sloof "
-            "pada 6 titik kaki rangka (sumbu 1-2-3, baris A-B).", size=2.05)
-    notes_block(sh, 24.0, 184.0, 215.0)
+    sh.text(24.0, 166.0, "PLAT ANGKUR & SAMBUNGAN KAKI:", size=2.6, bold=True)
+    sh.text(24.0, 170.6, "LIHAT DETAIL A-1 / A-2 PADA LEMBAR G-02 (SKALA 1 : 5)", size=2.2,
+            bold=True, color="#a04000")
+    sh.text(24.0, 175.6, "Plat besi 5 mm 100 x 100 mm + 4 dynabolt M12 per titik: 4 titik pada "
+            "balok kaki rangka (sumbu 1 & 3) dan 2 titik langsung pada sloof (sumbu 2).",
+            size=2.05)
+    notes_block(sh, 24.0, 181.5, 215.0)
     legend_block(sh, COLX, 44.0)
     sheet_list_block(sh, COLX, 82.0, COLW)
     return sh
